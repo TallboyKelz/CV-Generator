@@ -1,0 +1,8 @@
+{
+  "name": "cv-generator",
+  "version": "1.0.0",
+  "description": "AI-powered CV, Cover Letter & Job Application Generator",
+  "engines": {
+    "node": "18.x"
+  }
+}
