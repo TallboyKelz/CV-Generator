@@ -85,11 +85,22 @@
     .out-wrap.on { display: block; }
     .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
 
-    /* Status bar */
-    .stat-bar { display: none; background: var(--surface-hover); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 13px; font-size: .79rem; color: #555; margin-bottom: 1rem; align-items: center; gap: 8px; }
-    .stat-bar.on { display: flex; }
-    .spinner { width: 13px; height: 13px; border: 2px solid #DDD; border-top-color: #555; border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Progress bar */
+    .progress-wrap { display: none; margin-bottom: 1.2rem; }
+    .progress-wrap.on { display: block; }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .progress-label { font-size: .8rem; font-weight: 500; color: var(--text); }
+    .progress-pct { font-size: .75rem; color: var(--text-muted); }
+    .progress-track { height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--text); border-radius: 4px; transition: width .5s ease; width: 0%; }
+    .progress-steps { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .progress-step { display: flex; align-items: center; gap: 5px; font-size: .72rem; font-family: 'Inter', sans-serif; color: var(--text-light); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--white); transition: all .3s; }
+    .progress-step.active { color: var(--text); border-color: var(--text); background: var(--surface-hover); font-weight: 500; }
+    .progress-step.done { color: #3A7A3A; border-color: #C8E6C9; background: #F5FBF5; }
+    .step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: all .3s; flex-shrink: 0; }
+    .progress-step.active .step-dot { background: var(--text); animation: pulse-dot 1s infinite; }
+    .progress-step.done .step-dot { background: #3A7A3A; }
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.25} }
 
     /* Tabs */
     .tabs { display: flex; gap: 3px; margin-bottom: 1rem; background: var(--border-light); padding: 4px; border-radius: 8px; flex-wrap: wrap; }
@@ -319,7 +330,14 @@
 
   <div class="out-wrap" id="outWrap">
     <div class="divider"></div>
-    <div class="stat-bar" id="statBar"><div class="spinner"></div><span id="statText">Analyzing...</span></div>
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-header">
+        <span class="progress-label" id="progressLabel">Starting...</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-steps" id="progressSteps"></div>
+    </div>
     <div class="tabs" id="tabBar" style="display:none">
       <button class="tab on" id="tCV" onclick="showTab('cv')">CV</button>
       <button class="tab" id="tCL" onclick="showTab('cl')">Cover Letter</button>
@@ -351,7 +369,31 @@
 
   function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function showErr(msg) { const b=document.getElementById('errBar'); b.textContent=msg; b.classList.add('on'); setTimeout(()=>b.classList.remove('on'),8000); }
-  function setStatus(msg,on) { document.getElementById('statText').textContent=msg; document.getElementById('statBar').classList.toggle('on',on); }
+
+  /* ── Progress ── */
+  let _progressSteps = [];
+  function initProgress(steps) {
+    _progressSteps = steps;
+    document.getElementById('progressSteps').innerHTML = steps.map((s,i)=>`
+      <div class="progress-step" id="ps-${i}"><div class="step-dot"></div><span>${s.label}</span></div>`).join('');
+    setProgress(0);
+    document.getElementById('progressWrap').classList.add('on');
+  }
+  function setProgress(done) {
+    const total = _progressSteps.length;
+    const pct = total === 0 ? 100 : Math.round((done / total) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+    _progressSteps.forEach((s,i) => {
+      const el = document.getElementById('ps-'+i); if(!el) return;
+      el.classList.remove('active','done');
+      if (i < done) el.classList.add('done');
+      else if (i === done) el.classList.add('active');
+    });
+    if (done < total) document.getElementById('progressLabel').textContent = 'Generating ' + _progressSteps[done].label + '...';
+    else { document.getElementById('progressLabel').textContent = 'Done!'; document.getElementById('progressFill').style.width='100%'; document.getElementById('progressPct').textContent='100%'; }
+  }
+  function hideProgress() { document.getElementById('progressWrap').classList.remove('on'); }
 
   function handleFile(inp) {
     const f=inp.files[0]; if(!f) return;
@@ -379,6 +421,28 @@
     document.getElementById('dlBar').style.display = (t==='cv'||t==='cl') ? 'flex' : 'none';
   }
 
+  /* ── Core API call ── */
+  async function callAPI(systemPrompt, userPrompt) {
+    const messages = cvB64
+      ? [{ role: 'user', content: [
+          { type: 'document', source: { type: 'base64', media_type: cvMime, data: cvB64 } },
+          { type: 'text', text: userPrompt }
+        ]}]
+      : [{ role: 'user', content: userPrompt }];
+
+    const resp = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-opus-4-5', max_tokens: 2000, system: systemPrompt, messages })
+    });
+    if (!resp.ok) { const e = await resp.json(); throw new Error(e.error?.message || e.error || 'Server error ' + resp.status); }
+    const result = await resp.json();
+    const raw = result.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    try { return JSON.parse(clean); }
+    catch(e) { console.error('Parse fail:', clean); throw new Error('Could not parse response. Please try again.'); }
+  }
+
   async function generate() {
     const jd = document.getElementById('jdText').value.trim();
     const doCV = document.getElementById('doCV').checked;
@@ -399,7 +463,6 @@
     document.getElementById('outWrap').classList.add('on');
     document.getElementById('dlBar').style.display='none';
     document.getElementById('tabBar').style.display='none';
-    setStatus('Reading your CV and job description...', true);
 
     const toneMap = {
       executive: 'executive, strategic, C-suite — leadership, P&L ownership, scale',
@@ -407,165 +470,194 @@
       creative: 'creative, design-led — product impact, user outcomes',
       academic: 'academic, research — publications, methodology, grants'
     };
+    const toneDesc = toneMap[tone];
+    const sys = `You are a world-class CV writer and career coach. Return ONLY valid JSON. No markdown. No asterisks. No decorative dashes. No emojis. Raw JSON only.`;
 
-    const systemPrompt = `You are a world-class CV writer and career coach. Return ONLY valid JSON. No markdown. No asterisks. No decorative dashes. No emojis. Raw JSON only.`;
+    // Build queue of selected docs
+    const queue = [];
+    if (doCV) queue.push({ key:'CV', label:'CV', tab:'cv' });
+    if (doCL) queue.push({ key:'CL', label:'Cover Letter', tab:'cl' });
+    if (doEM) queue.push({ key:'EM', label:'Recruiter Email', tab:'em' });
+    if (doAB) queue.push({ key:'AB', label:'About Me', tab:'ab' });
+    if (doIQ) queue.push({ key:'IQ', label:'Interview Prep', tab:'iq' });
+    if (doSA) queue.push({ key:'SA', label:'Salary & Negotiation', tab:'sa' });
 
-    const userPrompt = `Write professional career documents in Harvard/MIT Business School format.
+    initProgress(queue);
+
+    // Hide all tabs initially
+    ['CV','CL','EM','AB','IQ','SA'].forEach(x => {
+      const el = document.getElementById('t'+x);
+      if (el) el.style.display = 'none';
+    });
+
+    const visible = [];
+    let firstTab = null;
+
+    // Shared context pulled from CV for use in subsequent calls
+    let candidateContext = '';
+
+    try {
+      for (let i = 0; i < queue.length; i++) {
+        const item = queue[i];
+        setProgress(i);
+
+        let parsed;
+
+        if (item.key === 'CV') {
+          parsed = await callAPI(sys, `Write a professional CV in Harvard/MIT Business School format.
 
 JOB DESCRIPTION:
 ${jd}
 
-TONE: ${toneMap[tone]}
+TONE: ${toneDesc}
 
 RULES:
-1. Extract the candidate's REAL name, contact, experience, education and company descriptions from their uploaded CV. Do not fabricate anything.
-2. If no CV is uploaded, use "[Your Name]" and similar placeholders.
-3. For each role in experience, include a "context" field — 2-3 sentences describing the company: what it does, its scale, industry, and significance. Extract from the CV if provided, otherwise write an accurate factual description.
-4. Every CV bullet: strong action verb + specific achievement + quantified result.
-5. Mirror exact JD keywords throughout for ATS optimization.
-6. Recruiter email: 3-4 sentences, professional, direct. State role and company. Mention CV and cover letter are attached.
-7. About Me: 3 versions — short (2-3 sentences), medium (1 paragraph), detailed (2-3 paragraphs). Each must start with who the candidate is professionally, highlight 1-2 standout achievements relevant to this JD, show personality and genuine motivation, end forward-looking. Do NOT start with "I am a" or "My name is".
-8. Interview Prep: Generate exactly 10 interview questions for this specific role, drawn directly from the JD requirements. Mix categories: Technical (3), Behavioural (3), Leadership (2), Culture/Motivation (2). For each question provide: the question itself, its category, a full suggested answer using the candidate's real experience from their CV in STAR format (Situation, Task, Action, Result). Answers must be specific, not generic.
-9. Salary: Research a realistic salary range for this specific role, seniority level, and location. Provide: floor (entry point to negotiate from), target (fair market rate to ask for), ceiling (stretch if exceptional), market context explanation (3-4 sentences on factors affecting pay for this role/location), a word-for-word negotiation script the candidate can say when the offer comes, and 5 practical negotiation tips specific to this role and market.
-10. Return ONLY raw JSON. Nothing before or after.
-
+1. Extract REAL name, contact, experience, education from the uploaded CV. Do not fabricate.
+2. If no CV uploaded, use "[Your Name]" placeholders.
+3. For each role include a "context" field: 2-3 sentences on what the company does, its scale and industry. Extract from CV if provided, otherwise write an accurate description.
+4. Every bullet: strong action verb + specific achievement + quantified result.
+5. Mirror exact JD keywords for ATS.
+6. Return ONLY this JSON, nothing else:
 {
-  "cv": {
-    "name": "Full Name",
-    "contact": { "email": "", "phone": "", "location": "", "linkedin": "", "website": "" },
-    "title": "Professional title matching JD",
-    "summary": "3-4 sentence summary. Strong hook. Quantified impact. ATS keywords from JD.",
-    "experience": [
-      {
-        "title": "Job Title",
-        "company": "Company Name",
-        "location": "City, Country",
-        "dates": "Month Year – Present",
-        "context": "2-3 sentence company description: what it does, scale, industry, significance.",
-        "bullets": ["Action verb + achievement + quantified metric"]
-      }
-    ],
-    "education": [{ "degree": "", "school": "", "location": "", "dates": "", "note": "" }],
-    "skills": "Skill 1, Skill 2, Skill 3, Skill 4, Skill 5, Skill 6, Skill 7, Skill 8",
-    "certifications": [""]
-  },
-  "coverLetter": {
-    "date": "March 2026",
-    "company": "",
-    "role": "",
-    "paragraphs": [
-      "Opening — bold hook, why this company and role. Do NOT start with I am writing.",
-      "Body — 2-3 specific achievements tied directly to JD requirements with numbers.",
-      "Fit — cultural alignment, values, what you bring in the first 90 days.",
-      "Close — confident CTA, enthusiasm, invite next step."
-    ],
-    "candidateName": ""
-  },
-  "recruiterEmail": {
-    "subject": "Application for [Role] at [Company]",
-    "to": "recruiter@company.com",
-    "body": "3-4 sentence professional email. State role and company clearly. Mention CV and cover letter are attached. Sign off with candidate name.",
-    "candidateName": ""
-  },
-  "aboutMe": {
-    "role": "Role from JD",
-    "company": "Company from JD",
-    "short": "2-3 punchy sentences for text boxes and quick intros. Specific to this role.",
-    "medium": "One full paragraph for interviews, LinkedIn, networking. Personal and compelling.",
-    "detailed": "Two to three paragraphs for application portals. Career journey, key achievements, motivation for this role and company, what you bring."
-  },
-  "interviewPrep": {
-    "role": "Role from JD",
-    "company": "Company from JD",
-    "questions": [
-      {
-        "category": "Technical",
-        "question": "Full interview question text",
-        "answer": "Full suggested answer using candidate's real experience. 3-5 sentences. Specific and confident.",
-        "star": {
-          "situation": "Specific situation from candidate's experience",
-          "task": "What was required of them",
-          "action": "Exactly what they did",
-          "result": "Quantified outcome"
+  "name": "Full Name",
+  "contact": { "email": "", "phone": "", "location": "", "linkedin": "", "website": "" },
+  "title": "Professional title matching JD",
+  "summary": "3-4 sentence summary. Strong hook. Quantified impact. ATS keywords.",
+  "experience": [{ "title": "", "company": "", "location": "", "dates": "", "context": "Company description.", "bullets": ["Action + achievement + metric"] }],
+  "education": [{ "degree": "", "school": "", "location": "", "dates": "", "note": "" }],
+  "skills": "Skill 1, Skill 2, Skill 3, Skill 4, Skill 5, Skill 6, Skill 7, Skill 8",
+  "certifications": [""]
+}`);
+          cvData = parsed;
+          candidateContext = `Candidate: ${parsed.name||''}. Current role: ${parsed.title||''}. Experience: ${(parsed.experience||[]).map(e=>e.title+' at '+e.company).join(', ')}. Key skills: ${parsed.skills||''}.`;
+          document.getElementById('pCV').innerHTML = renderCV(parsed);
         }
+
+        else if (item.key === 'CL') {
+          parsed = await callAPI(sys, `Write a tailored cover letter.
+
+JOB DESCRIPTION:
+${jd}
+TONE: ${toneDesc}
+CANDIDATE: ${candidateContext || 'Use the uploaded CV for candidate details.'}
+
+Rules: Bold hook opening (do NOT start with "I am writing"). 4 paragraphs: hook/motivation, 2-3 achievements with numbers tied to JD, cultural fit + first 90 days, confident CTA.
+Return ONLY this JSON:
+{
+  "date": "March 2026",
+  "company": "Company from JD",
+  "role": "Role from JD",
+  "paragraphs": ["Opening", "Body", "Fit", "Close"],
+  "candidateName": "Full Name"
+}`);
+          clData = parsed;
+          document.getElementById('pCL').innerHTML = renderCL(parsed);
+        }
+
+        else if (item.key === 'EM') {
+          parsed = await callAPI(sys, `Write a short professional recruiter email.
+
+JOB DESCRIPTION:
+${jd}
+CANDIDATE: ${candidateContext || 'Use the uploaded CV for candidate details.'}
+
+Rules: 3-4 sentences only. State role and company clearly. Mention CV and cover letter attached. Professional sign-off with candidate name.
+Return ONLY this JSON:
+{
+  "subject": "Application for [Role] at [Company]",
+  "to": "recruiter@company.com",
+  "body": "Full email body text.",
+  "candidateName": "Full Name"
+}`);
+          emData = parsed;
+          document.getElementById('pEM').innerHTML = renderEmail(parsed);
+        }
+
+        else if (item.key === 'AB') {
+          parsed = await callAPI(sys, `Write an "About Me" response for a job application.
+
+JOB DESCRIPTION:
+${jd}
+TONE: ${toneDesc}
+CANDIDATE: ${candidateContext || 'Use the uploaded CV for candidate details.'}
+
+Rules: 3 versions. Each must: start with who the candidate is professionally (NOT "I am a" or "My name is"), highlight 1-2 achievements relevant to this JD, show genuine motivation for this role, end with a forward-looking statement. Be warm, confident, human.
+Return ONLY this JSON:
+{
+  "role": "Role from JD",
+  "company": "Company from JD",
+  "short": "2-3 punchy sentences for text boxes and quick intros.",
+  "medium": "One full paragraph for interviews and networking.",
+  "detailed": "Two to three paragraphs for application portals."
+}`);
+          abData = parsed;
+          document.getElementById('pAB').innerHTML = renderAbout(parsed);
+        }
+
+        else if (item.key === 'IQ') {
+          parsed = await callAPI(sys, `Generate interview prep questions and answers.
+
+JOB DESCRIPTION:
+${jd}
+CANDIDATE: ${candidateContext || 'Use the uploaded CV for candidate details.'}
+
+Rules: Exactly 10 questions drawn directly from the JD. Mix: Technical (3), Behavioural (3), Leadership (2), Culture/Motivation (2). For each: full question, category, a specific answer using the candidate's real experience in STAR format. Answers must be specific, not generic.
+Return ONLY this JSON:
+{
+  "role": "Role from JD",
+  "company": "Company from JD",
+  "questions": [
+    {
+      "category": "Technical",
+      "question": "Question text",
+      "answer": "Full 3-5 sentence answer using candidate experience.",
+      "star": { "situation": "", "task": "", "action": "", "result": "" }
+    }
+  ]
+}`);
+          iqData = parsed;
+          document.getElementById('pIQ').innerHTML = renderInterview(parsed);
+        }
+
+        else if (item.key === 'SA') {
+          parsed = await callAPI(sys, `Research salary range and write a negotiation script.
+
+JOB DESCRIPTION:
+${jd}
+CANDIDATE: ${candidateContext || 'Use the uploaded CV for candidate details.'}
+
+Rules: Research realistic market rate for this specific role, seniority level, and location. The negotiation script must be word-for-word, natural, confident, and include the target number. Tips must be specific to this role and market.
+Return ONLY this JSON:
+{
+  "role": "Role from JD",
+  "company": "Company from JD",
+  "location": "Location from JD or CV",
+  "currency": "$",
+  "floor": "number only e.g. 85000",
+  "target": "number only e.g. 105000",
+  "ceiling": "number only e.g. 125000",
+  "period": "per year",
+  "context": "3-4 sentences on market rate, location factors, industry benchmarks, demand for these skills.",
+  "script": "Word-for-word script to say when the offer comes. 4-6 sentences. Warm, confident, includes the target number.",
+  "tips": ["Tip 1", "Tip 2", "Tip 3", "Tip 4", "Tip 5"]
+}`);
+          saData = parsed;
+          document.getElementById('pSA').innerHTML = renderSalary(parsed);
+        }
+
+        // Show tab as soon as doc is ready
+        const tabEl = document.getElementById('t'+item.key);
+        if (tabEl) tabEl.style.display = '';
+        visible.push(item.key);
+        if (!firstTab) { firstTab = item.tab; showTab(item.tab); document.getElementById('tabBar').style.display='flex'; }
+        if (item.tab === 'cv' || item.tab === 'cl') document.getElementById('dlBar').style.display='flex';
       }
-    ]
-  },
-  "salary": {
-    "role": "Role from JD",
-    "company": "Company from JD",
-    "location": "Location from JD or CV",
-    "currency": "USD or local currency symbol",
-    "floor": "85000",
-    "target": "105000",
-    "ceiling": "125000",
-    "period": "per year",
-    "context": "3-4 sentences explaining salary factors: market rate for this role and seniority, location adjustments, industry benchmarks, and demand for these skills right now.",
-    "script": "Word-for-word what to say when the offer comes. Natural, confident, professional. 4-6 sentences. Include the target number. Acknowledge the offer warmly, then make the ask.",
-    "tips": [
-      "Practical negotiation tip specific to this role and market",
-      "Tip 2",
-      "Tip 3",
-      "Tip 4",
-      "Tip 5"
-    ]
-  }
-}`;
 
-    try {
-      const messages = cvB64
-        ? [{ role: 'user', content: [
-            { type: 'document', source: { type: 'base64', media_type: cvMime, data: cvB64 } },
-            { type: 'text', text: userPrompt }
-          ]}]
-        : [{ role: 'user', content: userPrompt }];
-
-      setStatus('Writing your documents...', true);
-
-      const resp = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-opus-4-5',
-          max_tokens: 5000,
-          system: systemPrompt,
-          messages
-        })
-      });
-
-      if (!resp.ok) {
-        const e = await resp.json();
-        throw new Error(e.error?.message || e.error || 'Server error ' + resp.status);
-      }
-
-      const result = await resp.json();
-      const raw = result.content.filter(b => b.type === 'text').map(b => b.text).join('');
-      const clean = raw.replace(/```json|```/g, '').trim();
-
-      let parsed;
-      try { parsed = JSON.parse(clean); }
-      catch(e) { throw new Error('Could not parse AI response. Please try again.'); }
-
-      const visible = [];
-      if (doCV && parsed.cv) { cvData=parsed.cv; document.getElementById('pCV').innerHTML=renderCV(parsed.cv); visible.push('CV'); }
-      if (doCL && parsed.coverLetter) { clData=parsed.coverLetter; document.getElementById('pCL').innerHTML=renderCL(parsed.coverLetter); visible.push('CL'); }
-      if (doEM && parsed.recruiterEmail) { emData=parsed.recruiterEmail; document.getElementById('pEM').innerHTML=renderEmail(parsed.recruiterEmail); visible.push('EM'); }
-      if (doAB && parsed.aboutMe) { abData=parsed.aboutMe; document.getElementById('pAB').innerHTML=renderAbout(parsed.aboutMe); visible.push('AB'); }
-      if (doIQ && parsed.interviewPrep) { iqData=parsed.interviewPrep; document.getElementById('pIQ').innerHTML=renderInterview(parsed.interviewPrep); visible.push('IQ'); }
-      if (doSA && parsed.salary) { saData=parsed.salary; document.getElementById('pSA').innerHTML=renderSalary(parsed.salary); visible.push('SA'); }
-
-      ['CV','CL','EM','AB','IQ','SA'].forEach(x => {
-        const el = document.getElementById('t'+x);
-        if (el) el.style.display = visible.includes(x) ? '' : 'none';
-      });
-
-      setStatus('', false);
-      if (visible.length > 1) document.getElementById('tabBar').style.display = 'flex';
-      const first = doCV?'cv': doCL?'cl': doEM?'em': doAB?'ab': doIQ?'iq':'sa';
-      showTab(first);
+      setProgress(queue.length); // 100%
+      setTimeout(hideProgress, 2000);
 
     } catch(err) {
-      setStatus('', false);
+      hideProgress();
       showErr('Error: ' + err.message);
       console.error(err);
     } finally {
