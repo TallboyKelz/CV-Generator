@@ -590,6 +590,16 @@ RULES:
     window.open('mailto:?subject='+encodeURIComponent(subj?subj.value:'')+'&body='+encodeURIComponent(body?body.value:''));
   }
 
+  /* ── Filename helper ── */
+  function buildFilename(prefix, ext) {
+    const firstName = (cvData?.name || '').split(' ')[0] || 'CV';
+    const company   = (clData?.company || cvData?.experience?.[0]?.company || '').trim();
+    const role      = (clData?.role || cvData?.title || '').trim();
+    const clean     = s => s.replace(/[\/\\:*?"<>|]/g, '').trim();
+    const parts     = [prefix, clean(firstName), clean(company), clean(role)].filter(Boolean);
+    return parts.join('-') + '.' + ext;
+  }
+
   /* ── PDF via jsPDF ── */
   function dlPDF() {
     const btn=document.getElementById('btnPDF'); btn.textContent='Generating...'; btn.disabled=true;
@@ -667,7 +677,7 @@ RULES:
         // Certs
         const certs=(d.certifications||[]).filter(Boolean);
         if(certs.length){ secTitle('Certifications & Awards'); doc.setFont('times','normal'); doc.setFontSize(10); doc.setTextColor(34,34,34); certs.forEach(c=>{checkPage(6);doc.text(c,ml,y);y+=5;}); }
-        doc.save('cv.pdf');
+        doc.save(buildFilename('CV', 'pdf'));
 
       } else if(curTab==='cl'&&clData){
         const d=clData;
@@ -678,7 +688,7 @@ RULES:
         doc.setFont('times','normal'); doc.setFontSize(11); doc.setTextColor(17,17,17);
         (d.paragraphs||[]).forEach(p=>{ const lines=doc.splitTextToSize(p,tw); checkPage(lines.length*5.5+4); lines.forEach(l=>{doc.text(l,ml,y);y+=5.5;}); y+=4; });
         y+=4; doc.text('Sincerely,',ml,y); y+=7; doc.setFont('times','bold'); doc.text(d.candidateName||'',ml,y);
-        doc.save('cover-letter.pdf');
+        doc.save(buildFilename('Cover Letter', 'pdf'));
       }
     } catch(e){ showErr('PDF error: '+e.message); console.error(e); }
     finally{ btn.textContent='Download PDF'; btn.disabled=false; }
@@ -723,7 +733,7 @@ body{max-width:750px;margin:40px auto;padding:0 30px;background:white}
 .cl-sig strong{display:block;margin-top:5px}
 </style></head><body>${preview}</body></html>`;
     const a=document.createElement('a'); a.href='data:text/html;charset=utf-8,'+encodeURIComponent(html);
-    a.download=curTab==='cv'?'cv.html':'cover-letter.html';
+    a.download = curTab==='cv' ? buildFilename('CV','html') : buildFilename('Cover Letter','html');
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
 
