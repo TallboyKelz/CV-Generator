@@ -174,11 +174,71 @@
 
     .char-count { font-size: .69rem; color: var(--text-light); text-align: right; margin-top: 3px; }
 
+    /* ── Interview Prep ── */
+    .interview-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .interview-header { padding: 1rem 1.4rem; border-bottom: 1px solid var(--border); }
+    .interview-header-label { font-size: .68rem; font-weight: 600; color: var(--text-light); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+    .interview-header-title { font-size: .9rem; font-weight: 500; margin-bottom: 3px; }
+    .interview-header-hint { font-size: .72rem; color: var(--text-light); }
+    .interview-cats { display: flex; gap: 4px; padding: 1rem 1.4rem; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .icat-btn { padding: 5px 14px; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: .73rem; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--text-muted); transition: all .15s; }
+    .icat-btn.on { background: var(--text); color: white; border-color: var(--text); }
+    .interview-list { padding: 0; }
+    .iq-item { border-bottom: 1px solid var(--border); }
+    .iq-item:last-child { border-bottom: none; }
+    .iq-question { padding: 1rem 1.4rem; cursor: pointer; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; transition: background .15s; }
+    .iq-question:hover { background: var(--surface); }
+    .iq-q-left { display: flex; gap: 10px; align-items: flex-start; flex: 1; }
+    .iq-num { font-size: .7rem; font-weight: 600; color: var(--text-light); font-family: 'Inter', sans-serif; min-width: 20px; margin-top: 3px; }
+    .iq-q-mid { flex: 1; }
+    .iq-cat-tag { display: inline-block; font-size: .62rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; background: var(--surface-hover); color: var(--text-muted); border: 1px solid var(--border); margin-bottom: 4px; }
+    .iq-q-text { font-size: .9rem; font-weight: 500; line-height: 1.45; font-family: 'EB Garamond', serif; }
+    .iq-chevron { font-size: .65rem; color: var(--text-light); flex-shrink: 0; margin-top: 4px; transition: transform .2s; }
+    .iq-item.open .iq-chevron { transform: rotate(180deg); }
+    .iq-answer { display: none; padding: 0 1.4rem 1.2rem 3rem; }
+    .iq-item.open .iq-answer { display: block; }
+    .iq-answer-inner { background: var(--surface); border-radius: 8px; padding: 1rem 1.2rem; }
+    .iq-answer-label { font-size: .62rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--text-light); font-family: 'Inter', sans-serif; margin-bottom: 6px; }
+    .iq-answer-text { font-size: .9rem; font-family: 'EB Garamond', serif; line-height: 1.75; color: #333; }
+    .iq-star { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .iq-star-label { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-light); font-family: 'Inter', sans-serif; margin-bottom: 3px; }
+    .iq-star-text { font-size: .84rem; font-family: 'EB Garamond', serif; line-height: 1.6; color: #444; }
+    .iq-copy-btn { margin-top: 10px; padding: 6px 14px; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: .73rem; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--white); color: var(--text); transition: all .15s; }
+    .iq-copy-btn:hover { background: var(--surface-hover); }
+    .interview-actions { padding: .8rem 1.4rem; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* ── Salary & Negotiation ── */
+    .salary-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .salary-header { padding: 1rem 1.4rem; border-bottom: 1px solid var(--border); }
+    .salary-header-label { font-size: .68rem; font-weight: 600; color: var(--text-light); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+    .salary-header-title { font-size: .9rem; font-weight: 500; margin-bottom: 3px; }
+    .salary-header-hint { font-size: .72rem; color: var(--text-light); }
+    .salary-range-bar { padding: 1.4rem; border-bottom: 1px solid var(--border); }
+    .salary-range-title { font-size: .7rem; font-weight: 600; color: var(--text-light); letter-spacing: .08em; text-transform: uppercase; font-family: 'Inter', sans-serif; margin-bottom: 12px; }
+    .salary-figures { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .salary-fig { text-align: center; padding: 12px 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
+    .salary-fig.target { border-color: var(--text); background: var(--text); color: white; }
+    .salary-fig-label { font-size: .62rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-light); font-family: 'Inter', sans-serif; margin-bottom: 5px; }
+    .salary-fig.target .salary-fig-label { color: rgba(255,255,255,.55); }
+    .salary-fig-amount { font-size: 1.15rem; font-weight: 600; font-family: 'EB Garamond', serif; }
+    .salary-fig-note { font-size: .66rem; color: var(--text-light); margin-top: 3px; font-family: 'Inter', sans-serif; }
+    .salary-fig.target .salary-fig-note { color: rgba(255,255,255,.45); }
+    .salary-context { font-size: .85rem; color: #444; line-height: 1.7; font-family: 'EB Garamond', serif; }
+    .salary-section { padding: 1.2rem 1.4rem; border-bottom: 1px solid var(--border); }
+    .salary-section-title { font-size: .7rem; font-weight: 600; color: var(--text-light); letter-spacing: .08em; text-transform: uppercase; font-family: 'Inter', sans-serif; margin-bottom: 10px; }
+    .salary-script { font-size: .88rem; font-family: 'EB Garamond', serif; line-height: 1.8; color: #333; white-space: pre-wrap; background: var(--surface); border-radius: 8px; padding: 1rem 1.2rem; }
+    .salary-tips { list-style: none; padding: 0; margin: 0; }
+    .salary-tips li { font-size: .86rem; font-family: 'EB Garamond', serif; line-height: 1.65; color: #333; padding: 5px 0 5px 16px; position: relative; }
+    .salary-tips li::before { content: '—'; position: absolute; left: 0; color: var(--text-light); }
+    .salary-actions { padding: .8rem 1.4rem; display: flex; gap: 8px; flex-wrap: wrap; }
+
     @media (max-width: 600px) {
       .opts { grid-template-columns: 1fr; }
       .cv-preview, .cl-preview { padding: 1.8rem 1.5rem; }
       .app { padding: 1.5rem 1rem 4rem; }
       .hdr h1 { font-size: 1.6rem; }
+      .salary-figures { grid-template-columns: 1fr; }
+      .iq-star { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -248,6 +308,8 @@
     <label class="chk"><input type="checkbox" id="doCL" checked> Tailored cover letter</label>
     <label class="chk"><input type="checkbox" id="doEM" checked> Recruiter email</label>
     <label class="chk"><input type="checkbox" id="doAB" checked> About me &mdash; &ldquo;Tell us about yourself&rdquo;</label>
+    <label class="chk"><input type="checkbox" id="doIQ" checked> Interview prep &mdash; top questions &amp; STAR answers</label>
+    <label class="chk"><input type="checkbox" id="doSA" checked> Salary research &amp; negotiation script</label>
   </div>
 
   <button class="gen-btn" id="genBtn" onclick="generate()">
@@ -261,13 +323,17 @@
     <div class="tabs" id="tabBar" style="display:none">
       <button class="tab on" id="tCV" onclick="showTab('cv')">CV</button>
       <button class="tab" id="tCL" onclick="showTab('cl')">Cover Letter</button>
-      <button class="tab" id="tEM" onclick="showTab('em')">Recruiter Email</button>
+      <button class="tab" id="tEM" onclick="showTab('em')">Email</button>
       <button class="tab" id="tAB" onclick="showTab('ab')">About Me</button>
+      <button class="tab" id="tIQ" onclick="showTab('iq')">Interview Prep</button>
+      <button class="tab" id="tSA" onclick="showTab('sa')">Salary</button>
     </div>
     <div class="panel on" id="pCV"></div>
     <div class="panel" id="pCL"></div>
     <div class="panel" id="pEM"></div>
     <div class="panel" id="pAB"></div>
+    <div class="panel" id="pIQ"></div>
+    <div class="panel" id="pSA"></div>
     <div class="dl-bar" id="dlBar" style="display:none">
       <button class="dl-btn dl-pdf" id="btnPDF" onclick="dlPDF()">Download PDF</button>
       <button class="dl-btn dl-word" onclick="dlHTML()">Download for Word</button>
@@ -280,8 +346,8 @@
 <script>
   let tone = 'executive';
   let cvB64 = null, cvMime = 'application/pdf';
-  let cvData = null, clData = null, emData = null, abData = null;
-  let curTab = 'cv', curAbVer = 0;
+  let cvData = null, clData = null, emData = null, abData = null, iqData = null, saData = null;
+  let curTab = 'cv', curAbVer = 0, curIqCat = 'All';
 
   function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function showErr(msg) { const b=document.getElementById('errBar'); b.textContent=msg; b.classList.add('on'); setTimeout(()=>b.classList.remove('on'),8000); }
@@ -305,7 +371,7 @@
 
   function showTab(t) {
     curTab=t;
-    ['cv','cl','em','ab'].forEach(x=>{
+    ['cv','cl','em','ab','iq','sa'].forEach(x=>{
       const tb=document.getElementById('t'+x.toUpperCase()); const pn=document.getElementById('p'+x.toUpperCase());
       if(tb) tb.classList.toggle('on', x===t);
       if(pn) pn.classList.toggle('on', x===t);
@@ -319,15 +385,17 @@
     const doCL = document.getElementById('doCL').checked;
     const doEM = document.getElementById('doEM').checked;
     const doAB = document.getElementById('doAB').checked;
+    const doIQ = document.getElementById('doIQ').checked;
+    const doSA = document.getElementById('doSA').checked;
 
     if (!jd) { showErr('Please paste the job description.'); return; }
-    if (!doCV && !doCL && !doEM && !doAB) { showErr('Select at least one output.'); return; }
+    if (!doCV && !doCL && !doEM && !doAB && !doIQ && !doSA) { showErr('Select at least one output.'); return; }
 
     const btn = document.getElementById('genBtn');
     btn.disabled=true; btn.classList.add('running');
     document.getElementById('genBtnText').textContent = 'Generating...';
-    cvData=null; clData=null; emData=null; abData=null;
-    ['pCV','pCL','pEM','pAB'].forEach(id=>document.getElementById(id).innerHTML='');
+    cvData=null; clData=null; emData=null; abData=null; iqData=null; saData=null;
+    ['pCV','pCL','pEM','pAB','pIQ','pSA'].forEach(id=>document.getElementById(id).innerHTML='');
     document.getElementById('outWrap').classList.add('on');
     document.getElementById('dlBar').style.display='none';
     document.getElementById('tabBar').style.display='none';
@@ -352,12 +420,14 @@ TONE: ${toneMap[tone]}
 RULES:
 1. Extract the candidate's REAL name, contact, experience, education and company descriptions from their uploaded CV. Do not fabricate anything.
 2. If no CV is uploaded, use "[Your Name]" and similar placeholders.
-3. For each role in the experience section, include a "context" field — a 2-3 sentence paragraph describing what the company does, its scale, industry, and significance. This gives recruiters immediate context about the environments the candidate has worked in. Extract this directly from the candidate's CV if they have provided it. If not available in the CV, write an accurate factual description based on the company name. This context paragraph appears directly under the company name and dates, before the bullet points — exactly as seen in top-tier consulting and banking CVs.
+3. For each role in experience, include a "context" field — 2-3 sentences describing the company: what it does, its scale, industry, and significance. Extract from the CV if provided, otherwise write an accurate factual description.
 4. Every CV bullet: strong action verb + specific achievement + quantified result.
 5. Mirror exact JD keywords throughout for ATS optimization.
 6. Recruiter email: 3-4 sentences, professional, direct. State role and company. Mention CV and cover letter are attached.
-7. About Me: write 3 versions — short (2-3 sentences), medium (1 paragraph), detailed (2-3 paragraphs). Each must start with who the candidate is professionally, highlight 1-2 standout achievements relevant to this JD, show personality and genuine motivation, end with a forward-looking statement. Do NOT start with "I am a" or "My name is". Be warm, confident, human.
-8. Return ONLY raw JSON. Nothing before or after.
+7. About Me: 3 versions — short (2-3 sentences), medium (1 paragraph), detailed (2-3 paragraphs). Each must start with who the candidate is professionally, highlight 1-2 standout achievements relevant to this JD, show personality and genuine motivation, end forward-looking. Do NOT start with "I am a" or "My name is".
+8. Interview Prep: Generate exactly 10 interview questions for this specific role, drawn directly from the JD requirements. Mix categories: Technical (3), Behavioural (3), Leadership (2), Culture/Motivation (2). For each question provide: the question itself, its category, a full suggested answer using the candidate's real experience from their CV in STAR format (Situation, Task, Action, Result). Answers must be specific, not generic.
+9. Salary: Research a realistic salary range for this specific role, seniority level, and location. Provide: floor (entry point to negotiate from), target (fair market rate to ask for), ceiling (stretch if exceptional), market context explanation (3-4 sentences on factors affecting pay for this role/location), a word-for-word negotiation script the candidate can say when the offer comes, and 5 practical negotiation tips specific to this role and market.
+10. Return ONLY raw JSON. Nothing before or after.
 
 {
   "cv": {
@@ -371,13 +441,11 @@ RULES:
         "company": "Company Name",
         "location": "City, Country",
         "dates": "Month Year – Present",
-        "context": "2-3 sentence paragraph describing the company — what it does, its scale, industry, and why it matters. E.g. Ghana's leading telecommunications operator and subsidiary of MTN Group (Africa's largest mobile network with 307 million customers across 16 markets), serving 31.2 million subscribers with ~79% mobile data market share in a high-availability, mission-critical telecom environment.",
+        "context": "2-3 sentence company description: what it does, scale, industry, significance.",
         "bullets": ["Action verb + achievement + quantified metric"]
       }
     ],
-    "education": [
-      { "degree": "", "school": "", "location": "", "dates": "", "note": "" }
-    ],
+    "education": [{ "degree": "", "school": "", "location": "", "dates": "", "note": "" }],
     "skills": "Skill 1, Skill 2, Skill 3, Skill 4, Skill 5, Skill 6, Skill 7, Skill 8",
     "certifications": [""]
   },
@@ -405,6 +473,42 @@ RULES:
     "short": "2-3 punchy sentences for text boxes and quick intros. Specific to this role.",
     "medium": "One full paragraph for interviews, LinkedIn, networking. Personal and compelling.",
     "detailed": "Two to three paragraphs for application portals. Career journey, key achievements, motivation for this role and company, what you bring."
+  },
+  "interviewPrep": {
+    "role": "Role from JD",
+    "company": "Company from JD",
+    "questions": [
+      {
+        "category": "Technical",
+        "question": "Full interview question text",
+        "answer": "Full suggested answer using candidate's real experience. 3-5 sentences. Specific and confident.",
+        "star": {
+          "situation": "Specific situation from candidate's experience",
+          "task": "What was required of them",
+          "action": "Exactly what they did",
+          "result": "Quantified outcome"
+        }
+      }
+    ]
+  },
+  "salary": {
+    "role": "Role from JD",
+    "company": "Company from JD",
+    "location": "Location from JD or CV",
+    "currency": "USD or local currency symbol",
+    "floor": "85000",
+    "target": "105000",
+    "ceiling": "125000",
+    "period": "per year",
+    "context": "3-4 sentences explaining salary factors: market rate for this role and seniority, location adjustments, industry benchmarks, and demand for these skills right now.",
+    "script": "Word-for-word what to say when the offer comes. Natural, confident, professional. 4-6 sentences. Include the target number. Acknowledge the offer warmly, then make the ask.",
+    "tips": [
+      "Practical negotiation tip specific to this role and market",
+      "Tip 2",
+      "Tip 3",
+      "Tip 4",
+      "Tip 5"
+    ]
   }
 }`;
 
@@ -447,15 +551,17 @@ RULES:
       if (doCL && parsed.coverLetter) { clData=parsed.coverLetter; document.getElementById('pCL').innerHTML=renderCL(parsed.coverLetter); visible.push('CL'); }
       if (doEM && parsed.recruiterEmail) { emData=parsed.recruiterEmail; document.getElementById('pEM').innerHTML=renderEmail(parsed.recruiterEmail); visible.push('EM'); }
       if (doAB && parsed.aboutMe) { abData=parsed.aboutMe; document.getElementById('pAB').innerHTML=renderAbout(parsed.aboutMe); visible.push('AB'); }
+      if (doIQ && parsed.interviewPrep) { iqData=parsed.interviewPrep; document.getElementById('pIQ').innerHTML=renderInterview(parsed.interviewPrep); visible.push('IQ'); }
+      if (doSA && parsed.salary) { saData=parsed.salary; document.getElementById('pSA').innerHTML=renderSalary(parsed.salary); visible.push('SA'); }
 
-      ['CV','CL','EM','AB'].forEach(x => {
+      ['CV','CL','EM','AB','IQ','SA'].forEach(x => {
         const el = document.getElementById('t'+x);
         if (el) el.style.display = visible.includes(x) ? '' : 'none';
       });
 
       setStatus('', false);
       if (visible.length > 1) document.getElementById('tabBar').style.display = 'flex';
-      const first = doCV?'cv': doCL?'cl': doEM?'em':'ab';
+      const first = doCV?'cv': doCL?'cl': doEM?'em': doAB?'ab': doIQ?'iq':'sa';
       showTab(first);
 
     } catch(err) {
@@ -588,6 +694,148 @@ RULES:
   function openMailto() {
     const subj=document.getElementById('emailSubj'); const body=document.getElementById('emailBody');
     window.open('mailto:?subject='+encodeURIComponent(subj?subj.value:'')+'&body='+encodeURIComponent(body?body.value:''));
+  }
+
+  /* ── Interview Prep renderer ── */
+  function renderInterview(d) {
+    const cats = ['All', ...new Set((d.questions||[]).map(q=>q.category))];
+    const catBtns = cats.map(c=>`<button class="icat-btn ${c==='All'?'on':''}" onclick="filterIQ('${c}',this)">${c}</button>`).join('');
+
+    const questions = (d.questions||[]).map((q,i)=>`
+      <div class="iq-item" id="iq-${i}" data-cat="${esc(q.category||'')}">
+        <div class="iq-question" onclick="toggleIQ(${i})">
+          <div class="iq-q-left">
+            <div class="iq-num">${i+1}</div>
+            <div class="iq-q-mid">
+              <div class="iq-cat-tag">${esc(q.category||'')}</div>
+              <div class="iq-q-text">${esc(q.question||'')}</div>
+            </div>
+          </div>
+          <div class="iq-chevron">&#9660;</div>
+        </div>
+        <div class="iq-answer">
+          <div class="iq-answer-inner">
+            <div class="iq-answer-label">Suggested Answer</div>
+            <div class="iq-answer-text">${esc(q.answer||'')}</div>
+            ${q.star ? `<div class="iq-star">
+              <div><div class="iq-star-label">Situation</div><div class="iq-star-text">${esc(q.star.situation||'')}</div></div>
+              <div><div class="iq-star-label">Task</div><div class="iq-star-text">${esc(q.star.task||'')}</div></div>
+              <div><div class="iq-star-label">Action</div><div class="iq-star-text">${esc(q.star.action||'')}</div></div>
+              <div><div class="iq-star-label">Result</div><div class="iq-star-text">${esc(q.star.result||'')}</div></div>
+            </div>` : ''}
+            <button class="iq-copy-btn" onclick="copyIQ(${i})">Copy answer</button>
+          </div>
+        </div>
+      </div>`).join('');
+
+    return `<div class="interview-card">
+      <div class="interview-header">
+        <div class="interview-header-label">Interview Prep</div>
+        <div class="interview-header-title">Top questions for ${esc(d.role||'this role')} at ${esc(d.company||'this company')}</div>
+        <div class="interview-header-hint">Click any question to expand the suggested answer. All answers use your real experience.</div>
+      </div>
+      <div class="interview-cats" id="iqCats">${catBtns}</div>
+      <div class="interview-list" id="iqList">${questions}</div>
+      <div class="interview-actions">
+        <button class="action-btn primary" onclick="copyAllIQ()">Copy all Q&amp;As</button>
+      </div>
+    </div>`;
+  }
+
+  function toggleIQ(i) {
+    const el = document.getElementById('iq-'+i);
+    if(el) el.classList.toggle('open');
+  }
+
+  function filterIQ(cat, btn) {
+    curIqCat = cat;
+    document.querySelectorAll('.icat-btn').forEach(b=>b.classList.remove('on'));
+    if(btn) btn.classList.add('on');
+    document.querySelectorAll('.iq-item').forEach(el=>{
+      el.style.display = (cat==='All' || el.dataset.cat===cat) ? '' : 'none';
+    });
+  }
+
+  function copyIQ(i) {
+    if(!iqData) return;
+    const q = iqData.questions[i];
+    if(!q) return;
+    const txt = `Q: ${q.question}\n\nAnswer: ${q.answer}\n\nSituation: ${q.star?.situation||''}\nTask: ${q.star?.task||''}\nAction: ${q.star?.action||''}\nResult: ${q.star?.result||''}`;
+    navigator.clipboard.writeText(txt).then(()=>{ const b=event.target; b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy answer',2000); });
+  }
+
+  function copyAllIQ() {
+    if(!iqData) return;
+    let txt = `INTERVIEW PREP — ${iqData.role} at ${iqData.company}\n\n`;
+    (iqData.questions||[]).forEach((q,i)=>{
+      txt += `${i+1}. [${q.category}] ${q.question}\n\n`;
+      txt += `Answer: ${q.answer}\n\n`;
+      if(q.star){ txt += `Situation: ${q.star.situation}\nTask: ${q.star.task}\nAction: ${q.star.action}\nResult: ${q.star.result}\n`; }
+      txt += '\n---\n\n';
+    });
+    navigator.clipboard.writeText(txt.trim()).then(()=>{ const b=event.target; b.textContent='Copied all!'; setTimeout(()=>b.textContent='Copy all Q&As',2000); });
+  }
+
+  /* ── Salary renderer ── */
+  function renderSalary(d) {
+    const fmt = n => { const num=parseInt((n||'0').replace(/\D/g,'')); return isNaN(num)?n:(d.currency||'$')+num.toLocaleString(); };
+    const tips = (d.tips||[]).map(t=>`<li>${esc(t)}</li>`).join('');
+    return `<div class="salary-card">
+      <div class="salary-header">
+        <div class="salary-header-label">Salary Research &amp; Negotiation</div>
+        <div class="salary-header-title">${esc(d.role||'this role')} &mdash; ${esc(d.location||'')}</div>
+        <div class="salary-header-hint">Market data for your specific role, seniority and location. Use this before every offer conversation.</div>
+      </div>
+      <div class="salary-range-bar">
+        <div class="salary-range-title">Market Rate Range</div>
+        <div class="salary-figures">
+          <div class="salary-fig">
+            <div class="salary-fig-label">Floor</div>
+            <div class="salary-fig-amount">${fmt(d.floor)}</div>
+            <div class="salary-fig-note">Minimum to accept</div>
+          </div>
+          <div class="salary-fig target">
+            <div class="salary-fig-label">Target</div>
+            <div class="salary-fig-amount">${fmt(d.target)}</div>
+            <div class="salary-fig-note">Ask for this number</div>
+          </div>
+          <div class="salary-fig">
+            <div class="salary-fig-label">Ceiling</div>
+            <div class="salary-fig-amount">${fmt(d.ceiling)}</div>
+            <div class="salary-fig-note">Stretch if exceptional</div>
+          </div>
+        </div>
+        <div class="salary-context">${esc(d.context||'')}</div>
+      </div>
+      <div class="salary-section">
+        <div class="salary-section-title">Negotiation Script — say this when the offer comes</div>
+        <div class="salary-script">${esc(d.script||'')}</div>
+      </div>
+      <div class="salary-section">
+        <div class="salary-section-title">Negotiation Tips</div>
+        <ul class="salary-tips">${tips}</ul>
+      </div>
+      <div class="salary-actions">
+        <button class="action-btn primary" onclick="copySalaryScript()">Copy script</button>
+        <button class="action-btn" onclick="copySalaryAll()">Copy everything</button>
+      </div>
+    </div>`;
+  }
+
+  function copySalaryScript() {
+    if(!saData){showErr('Nothing to copy.');return;}
+    navigator.clipboard.writeText(saData.script||'').then(()=>{ const b=event.target; b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy script',2000); });
+  }
+
+  function copySalaryAll() {
+    if(!saData){showErr('Nothing to copy.');return;}
+    const fmt = n => { const num=parseInt((n||'0').replace(/\D/g,'')); return isNaN(num)?n:(saData.currency||'$')+num.toLocaleString(); };
+    let txt = `SALARY RESEARCH — ${saData.role} | ${saData.location}\n\n`;
+    txt += `Floor: ${fmt(saData.floor)}\nTarget: ${fmt(saData.target)}\nCeiling: ${fmt(saData.ceiling)}\n\n`;
+    txt += `Market Context:\n${saData.context}\n\n`;
+    txt += `Negotiation Script:\n${saData.script}\n\n`;
+    txt += `Tips:\n`+(saData.tips||[]).map((t,i)=>`${i+1}. ${t}`).join('\n');
+    navigator.clipboard.writeText(txt).then(()=>{ const b=event.target; b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy everything',2000); });
   }
 
   /* ── Filename helper ── */
