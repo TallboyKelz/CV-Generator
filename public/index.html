@@ -25,7 +25,6 @@
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
     .app { max-width: 820px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
 
     /* Header */
@@ -43,11 +42,7 @@
     .step-sub { font-size: .72rem; color: var(--text-muted); margin-top: 1px; }
 
     /* Form elements */
-    textarea, input[type="text"] {
-      width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
-      padding: 9px 13px; font-family: 'Inter', sans-serif; font-size: .82rem;
-      background: var(--surface); color: var(--text); transition: border-color .15s, background .15s;
-    }
+    textarea, input[type="text"] { width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 13px; font-family: 'Inter', sans-serif; font-size: .82rem; background: var(--surface); color: var(--text); transition: border-color .15s, background .15s; }
     textarea { min-height: 130px; resize: vertical; }
     textarea:focus, input:focus { outline: none; border-color: #555; background: var(--white); }
 
@@ -73,7 +68,6 @@
     /* Checkboxes */
     .chk { display: flex; align-items: center; gap: 8px; font-size: .79rem; color: var(--text-muted); margin-top: 6px; cursor: pointer; }
     .chk input { accent-color: var(--text); cursor: pointer; width: 14px; height: 14px; }
-
     .section-label { font-size: .7rem; font-weight: 600; color: var(--text-light); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 7px; }
 
     /* Generate button */
@@ -82,7 +76,7 @@
     .gen-btn:disabled { background: #BBB; cursor: not-allowed; }
     .gen-btn.running { background: #555; }
 
-    /* Error / info bars */
+    /* Error bar */
     .err-bar { display: none; background: #FFF5F5; border: 1px solid #FFCDD2; border-radius: var(--radius-sm); padding: 9px 13px; font-size: .79rem; color: #C62828; margin-top: .8rem; }
     .err-bar.on { display: block; }
 
@@ -112,7 +106,7 @@
     .dl-word, .dl-copy { background: var(--white); color: var(--text); }
     .dl-word:hover, .dl-copy:hover { background: var(--surface-hover); }
 
-    /* CV Preview */
+    /* ── CV Preview ── */
     .cv-preview { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.8rem 3.2rem; font-family: 'EB Garamond', serif; color: var(--text); line-height: 1.55; font-size: 11pt; }
     .cv-name { font-size: 22pt; font-weight: 600; text-align: center; letter-spacing: .02em; margin-bottom: 4px; }
     .cv-title-line { text-align: center; font-size: 9.5pt; font-family: 'Inter', sans-serif; color: #444; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px; }
@@ -121,11 +115,13 @@
     .cv-sec-title { font-size: 7.5pt; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; font-family: 'Inter', sans-serif; border-bottom: 1px solid var(--text); padding-bottom: 3px; margin-bottom: 10px; }
     .cv-section { margin-bottom: 18px; }
     .cv-summary { font-size: 10.5pt; line-height: 1.65; color: #222; }
-    .cv-job { margin-bottom: 10px; }
+    .cv-job { margin-bottom: 14px; }
     .cv-job-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px; }
     .cv-job-title { font-size: 11pt; font-weight: 600; }
     .cv-job-dates { font-size: 9pt; font-family: 'Inter', sans-serif; color: #333; }
-    .cv-job-co { font-size: 10pt; font-style: italic; color: #333; margin-bottom: 4px; }
+    .cv-job-co { font-size: 10pt; font-style: italic; color: #333; margin-bottom: 5px; }
+    /* Company context — the new summary paragraph */
+    .cv-job-context { font-size: 9.5pt; color: #444; line-height: 1.6; margin-bottom: 7px; font-style: italic; }
     .cv-bullets { margin: 0; padding-left: 16px; }
     .cv-bullets li { font-size: 10pt; line-height: 1.6; margin-bottom: 2px; color: #222; }
     .cv-edu-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
@@ -205,7 +201,7 @@
       <div class="step-num">1</div>
       <div>
         <div class="step-title">Upload your current CV <span style="font-weight:300;color:#AAA">(optional but recommended)</span></div>
-        <div class="step-sub">PDF — the AI reads your real name, experience and education</div>
+        <div class="step-sub">PDF — the AI reads your real name, experience, education and company descriptions</div>
       </div>
     </div>
     <div class="upzone" id="upzone">
@@ -354,13 +350,14 @@ ${jd}
 TONE: ${toneMap[tone]}
 
 RULES:
-1. Extract the candidate's REAL name, contact, experience, education from their uploaded CV. Do not fabricate anything.
-2. If no CV is uploaded, use "[Your Name]" and similar placeholders so the user knows what to fill in.
-3. Every CV bullet: strong action verb + specific achievement + quantified result.
-4. Mirror exact JD keywords throughout for ATS optimization.
-5. Recruiter email: 3-4 sentences, professional, direct. State role and company. Mention CV and cover letter are attached.
-6. About Me: write 3 versions — short (2-3 sentences), medium (1 paragraph), detailed (2-3 paragraphs). Each must start with who the candidate is professionally, highlight 1-2 standout achievements relevant to this JD, show personality and genuine motivation, and end with a forward-looking statement. Do NOT start with "I am a" or "My name is". Be warm, confident, human — not robotic.
-7. Return ONLY raw JSON. Nothing before or after.
+1. Extract the candidate's REAL name, contact, experience, education and company descriptions from their uploaded CV. Do not fabricate anything.
+2. If no CV is uploaded, use "[Your Name]" and similar placeholders.
+3. For each role in the experience section, include a "context" field — a 2-3 sentence paragraph describing what the company does, its scale, industry, and significance. This gives recruiters immediate context about the environments the candidate has worked in. Extract this directly from the candidate's CV if they have provided it. If not available in the CV, write an accurate factual description based on the company name. This context paragraph appears directly under the company name and dates, before the bullet points — exactly as seen in top-tier consulting and banking CVs.
+4. Every CV bullet: strong action verb + specific achievement + quantified result.
+5. Mirror exact JD keywords throughout for ATS optimization.
+6. Recruiter email: 3-4 sentences, professional, direct. State role and company. Mention CV and cover letter are attached.
+7. About Me: write 3 versions — short (2-3 sentences), medium (1 paragraph), detailed (2-3 paragraphs). Each must start with who the candidate is professionally, highlight 1-2 standout achievements relevant to this JD, show personality and genuine motivation, end with a forward-looking statement. Do NOT start with "I am a" or "My name is". Be warm, confident, human.
+8. Return ONLY raw JSON. Nothing before or after.
 
 {
   "cv": {
@@ -368,8 +365,19 @@ RULES:
     "contact": { "email": "", "phone": "", "location": "", "linkedin": "", "website": "" },
     "title": "Professional title matching JD",
     "summary": "3-4 sentence summary. Strong hook. Quantified impact. ATS keywords from JD.",
-    "experience": [{ "title": "", "company": "", "location": "", "dates": "", "bullets": ["Action verb + achievement + metric"] }],
-    "education": [{ "degree": "", "school": "", "location": "", "dates": "", "note": "" }],
+    "experience": [
+      {
+        "title": "Job Title",
+        "company": "Company Name",
+        "location": "City, Country",
+        "dates": "Month Year – Present",
+        "context": "2-3 sentence paragraph describing the company — what it does, its scale, industry, and why it matters. E.g. Ghana's leading telecommunications operator and subsidiary of MTN Group (Africa's largest mobile network with 307 million customers across 16 markets), serving 31.2 million subscribers with ~79% mobile data market share in a high-availability, mission-critical telecom environment.",
+        "bullets": ["Action verb + achievement + quantified metric"]
+      }
+    ],
+    "education": [
+      { "degree": "", "school": "", "location": "", "dates": "", "note": "" }
+    ],
     "skills": "Skill 1, Skill 2, Skill 3, Skill 4, Skill 5, Skill 6, Skill 7, Skill 8",
     "certifications": [""]
   },
@@ -401,7 +409,6 @@ RULES:
 }`;
 
     try {
-      // Build messages array
       const messages = cvB64
         ? [{ role: 'user', content: [
             { type: 'document', source: { type: 'base64', media_type: cvMime, data: cvB64 } },
@@ -411,7 +418,6 @@ RULES:
 
       setStatus('Writing your documents...', true);
 
-      // Call our own backend — API key stays on the server
       const resp = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -464,20 +470,32 @@ RULES:
 
   /* ── Renderers ── */
   function renderCV(d) {
-    const c=d.contact||{};
-    const cp=[c.email,c.phone,c.location,c.linkedin,c.website].filter(Boolean).join('  |  ');
-    const exp=(d.experience||[]).map(j=>`
+    const c = d.contact||{};
+    const cp = [c.email,c.phone,c.location,c.linkedin,c.website].filter(Boolean).join('  |  ');
+
+    const exp = (d.experience||[]).map(j=>`
       <div class="cv-job">
-        <div class="cv-job-row"><span class="cv-job-title">${esc(j.title)}</span><span class="cv-job-dates">${esc(j.dates||'')}</span></div>
+        <div class="cv-job-row">
+          <span class="cv-job-title">${esc(j.title)}</span>
+          <span class="cv-job-dates">${esc(j.dates||'')}</span>
+        </div>
         <div class="cv-job-co">${esc(j.company)}${j.location?', '+esc(j.location):''}</div>
+        ${j.context ? `<div class="cv-job-context">${esc(j.context)}</div>` : ''}
         <ul class="cv-bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>
       </div>`).join('');
-    const edu=(d.education||[]).map(e=>`
+
+    const edu = (d.education||[]).map(e=>`
       <div class="cv-edu-row">
-        <div><div class="cv-edu-deg">${esc(e.degree)}</div><div class="cv-edu-sch">${esc(e.school)}${e.location?', '+esc(e.location):''}</div>${e.note?`<div class="cv-edu-note">${esc(e.note)}</div>`:''}</div>
+        <div>
+          <div class="cv-edu-deg">${esc(e.degree)}</div>
+          <div class="cv-edu-sch">${esc(e.school)}${e.location?', '+esc(e.location):''}</div>
+          ${e.note?`<div class="cv-edu-note">${esc(e.note)}</div>`:''}
+        </div>
         <div class="cv-edu-dates">${esc(e.dates||'')}</div>
       </div>`).join('');
-    const certs=(d.certifications||[]).filter(Boolean);
+
+    const certs = (d.certifications||[]).filter(Boolean);
+
     return `<div class="cv-preview">
       <div class="cv-name">${esc(d.name||'')}</div>
       ${d.title?`<div class="cv-title-line">${esc(d.title)}</div>`:''}
@@ -492,7 +510,7 @@ RULES:
   }
 
   function renderCL(d) {
-    const paras=(d.paragraphs||[]).map(p=>`<div class="cl-para">${esc(p)}</div>`).join('');
+    const paras = (d.paragraphs||[]).map(p=>`<div class="cl-para">${esc(p)}</div>`).join('');
     return `<div class="cl-preview">
       <div class="cl-date">${esc(d.date||'')}</div>
       <div class="cl-addr">Hiring Manager<br>${esc(d.company||'')}</div>
@@ -517,9 +535,13 @@ RULES:
   }
 
   function renderAbout(d) {
-    const versions=[{key:'short',label:'Short',hint:'2–3 sentences — for text boxes, forms, quick intros'},{key:'medium',label:'Medium',hint:'1 paragraph — for interviews and networking'},{key:'detailed',label:'Detailed',hint:'2–3 paragraphs — for application portals'}];
-    const vTabs=versions.map((v,i)=>`<button class="av-tab ${i===0?'on':''}" onclick="switchAbout(${i})" id="avt${i}">${v.label}</button>`).join('');
-    const vPanels=versions.map((v,i)=>`
+    const versions=[
+      {key:'short',label:'Short',hint:'2–3 sentences — for text boxes, forms, quick intros'},
+      {key:'medium',label:'Medium',hint:'1 paragraph — for interviews and networking'},
+      {key:'detailed',label:'Detailed',hint:'2–3 paragraphs — for application portals'}
+    ];
+    const vTabs = versions.map((v,i)=>`<button class="av-tab ${i===0?'on':''}" onclick="switchAbout(${i})" id="avt${i}">${v.label}</button>`).join('');
+    const vPanels = versions.map((v,i)=>`
       <div id="avp${i}" style="display:${i===0?'block':'none'}">
         <div class="about-version-hint">${v.hint}</div>
         <textarea id="avc${i}" class="about-edit" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'">${esc(d[v.key]||'')}</textarea>
@@ -574,87 +596,161 @@ RULES:
     try {
       const {jsPDF}=window.jspdf;
       const doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
-      const W=210,ml=20,mr=20,tw=W-ml-mr; let y=20;
-      function checkPage(n){if(y+n>282){doc.addPage();y=20;}}
-      function hline(){doc.setDrawColor(17,17,17);doc.setLineWidth(.4);doc.line(ml,y,W-mr,y);}
-      function wrap(txt,x,maxW,lh){doc.splitTextToSize(txt,maxW).forEach(l=>{checkPage(lh);doc.text(l,x,y);y+=lh;});}
-      function secTitle(t){checkPage(10);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(17,17,17);doc.text(t.toUpperCase(),ml,y);hline();y+=6;}
+      const W=210, ml=20, mr=20, tw=W-ml-mr;
+      let y=20;
+
+      function checkPage(n){ if(y+n>282){doc.addPage();y=20;} }
+      function hline(){ doc.setDrawColor(17,17,17); doc.setLineWidth(.4); doc.line(ml,y,W-mr,y); }
+      function wrap(txt,x,maxW,lh){ doc.splitTextToSize(txt,maxW).forEach(l=>{checkPage(lh);doc.text(l,x,y);y+=lh;}); }
+      function secTitle(t){ checkPage(10); doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(17,17,17); doc.text(t.toUpperCase(),ml,y); hline(); y+=6; }
 
       if(curTab==='cv'&&cvData){
-        const d=cvData,c=d.contact||{};
-        doc.setFont('times','bold');doc.setFontSize(20);doc.setTextColor(17,17,17);doc.text(d.name||'',W/2,y,{align:'center'});y+=7;
-        if(d.title){doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(60,60,60);doc.text((d.title||'').toUpperCase(),W/2,y,{align:'center'});y+=5;}
+        const d=cvData, c=d.contact||{};
+        // Name
+        doc.setFont('times','bold'); doc.setFontSize(20); doc.setTextColor(17,17,17);
+        doc.text(d.name||'', W/2, y, {align:'center'}); y+=7;
+        // Title
+        if(d.title){ doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(60,60,60); doc.text((d.title||'').toUpperCase(), W/2, y, {align:'center'}); y+=5; }
+        // Contact
         const cp=[c.email,c.phone,c.location,c.linkedin,c.website].filter(Boolean).join('  |  ');
-        if(cp){doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(80,80,80);doc.text(cp,W/2,y,{align:'center'});y+=5;}
-        hline();y+=6;
-        if(d.summary){secTitle('Professional Summary');doc.setFont('times','normal');doc.setFontSize(10);doc.setTextColor(34,34,34);wrap(d.summary,ml,tw,5);y+=4;}
+        if(cp){ doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(80,80,80); doc.text(cp, W/2, y, {align:'center'}); y+=5; }
+        hline(); y+=6;
+        // Summary
+        if(d.summary){ secTitle('Professional Summary'); doc.setFont('times','normal'); doc.setFontSize(10); doc.setTextColor(34,34,34); wrap(d.summary,ml,tw,5); y+=4; }
+        // Experience
         if((d.experience||[]).length){
           secTitle('Professional Experience');
           (d.experience||[]).forEach(j=>{
-            checkPage(14);
-            doc.setFont('times','bold');doc.setFontSize(10.5);doc.setTextColor(17,17,17);doc.text(j.title||'',ml,y);
-            if(j.dates){doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(60,60,60);doc.text(j.dates,W-mr-doc.getTextWidth(j.dates),y);}
+            checkPage(16);
+            // Job title + dates
+            doc.setFont('times','bold'); doc.setFontSize(10.5); doc.setTextColor(17,17,17);
+            doc.text(j.title||'', ml, y);
+            if(j.dates){ doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(60,60,60); doc.text(j.dates, W-mr-doc.getTextWidth(j.dates), y); }
             y+=5;
-            doc.setFont('times','italic');doc.setFontSize(10);doc.setTextColor(60,60,60);doc.text((j.company||'')+(j.location?', '+j.location:''),ml,y);y+=5;
-            doc.setFont('times','normal');doc.setFontSize(10);doc.setTextColor(34,34,34);
-            (j.bullets||[]).forEach(b=>{const lines=doc.splitTextToSize(b,tw-5);checkPage(lines.length*4.5+2);doc.text('-',ml,y);lines.forEach(l=>{doc.text(l,ml+4,y);y+=4.5;});});
-            y+=3;
+            // Company
+            doc.setFont('times','italic'); doc.setFontSize(10); doc.setTextColor(60,60,60);
+            doc.text((j.company||'')+(j.location?', '+j.location:''), ml, y); y+=5;
+            // Company context paragraph
+            if(j.context){
+              doc.setFont('times','italic'); doc.setFontSize(9.5); doc.setTextColor(80,80,80);
+              const ctxLines = doc.splitTextToSize(j.context, tw);
+              ctxLines.forEach(l=>{ checkPage(4.5); doc.text(l,ml,y); y+=4.5; });
+              y+=3;
+            }
+            // Bullets
+            doc.setFont('times','normal'); doc.setFontSize(10); doc.setTextColor(34,34,34);
+            (j.bullets||[]).forEach(b=>{
+              const lines=doc.splitTextToSize(b,tw-5);
+              checkPage(lines.length*4.5+2);
+              doc.text('-',ml,y);
+              lines.forEach(l=>{ doc.text(l,ml+4,y); y+=4.5; });
+            });
+            y+=4;
           });
         }
+        // Education
         if((d.education||[]).length){
           secTitle('Education');
           (d.education||[]).forEach(e=>{
             checkPage(12);
-            doc.setFont('times','bold');doc.setFontSize(10.5);doc.setTextColor(17,17,17);doc.text(e.degree||'',ml,y);
-            if(e.dates){doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(60,60,60);doc.text(e.dates,W-mr-doc.getTextWidth(e.dates),y);}
+            doc.setFont('times','bold'); doc.setFontSize(10.5); doc.setTextColor(17,17,17); doc.text(e.degree||'',ml,y);
+            if(e.dates){ doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(60,60,60); doc.text(e.dates, W-mr-doc.getTextWidth(e.dates), y); }
             y+=5;
-            doc.setFont('times','italic');doc.setFontSize(10);doc.setTextColor(60,60,60);doc.text((e.school||'')+(e.location?', '+e.location:''),ml,y);y+=5;
-            if(e.note){doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(80,80,80);doc.text(e.note,ml,y);y+=5;}
+            doc.setFont('times','italic'); doc.setFontSize(10); doc.setTextColor(60,60,60);
+            doc.text((e.school||'')+(e.location?', '+e.location:''),ml,y); y+=5;
+            if(e.note){ doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(80,80,80); doc.text(e.note,ml,y); y+=5; }
             y+=2;
           });
         }
-        if(d.skills){secTitle('Core Competencies');doc.setFont('times','normal');doc.setFontSize(10);doc.setTextColor(34,34,34);wrap(d.skills,ml,tw,5);y+=3;}
+        // Skills
+        if(d.skills){ secTitle('Core Competencies'); doc.setFont('times','normal'); doc.setFontSize(10); doc.setTextColor(34,34,34); wrap(d.skills,ml,tw,5); y+=3; }
+        // Certs
         const certs=(d.certifications||[]).filter(Boolean);
-        if(certs.length){secTitle('Certifications & Awards');doc.setFont('times','normal');doc.setFontSize(10);doc.setTextColor(34,34,34);certs.forEach(c=>{checkPage(6);doc.text(c,ml,y);y+=5;});}
+        if(certs.length){ secTitle('Certifications & Awards'); doc.setFont('times','normal'); doc.setFontSize(10); doc.setTextColor(34,34,34); certs.forEach(c=>{checkPage(6);doc.text(c,ml,y);y+=5;}); }
         doc.save('cv.pdf');
+
       } else if(curTab==='cl'&&clData){
         const d=clData;
-        doc.setFont('times','normal');doc.setFontSize(10);doc.setTextColor(80,80,80);doc.text(d.date||'',ml,y);y+=8;
-        doc.setTextColor(17,17,17);doc.setFontSize(10.5);doc.text('Hiring Manager',ml,y);y+=5;doc.text(d.company||'',ml,y);y+=10;
-        doc.setFont('times','bold');doc.text('Re: Application for '+(d.role||''),ml,y);y+=10;
-        doc.setFont('times','normal');doc.setFontSize(11);doc.setTextColor(17,17,17);
-        (d.paragraphs||[]).forEach(p=>{const lines=doc.splitTextToSize(p,tw);checkPage(lines.length*5.5+4);lines.forEach(l=>{doc.text(l,ml,y);y+=5.5;});y+=4;});
-        y+=4;doc.text('Sincerely,',ml,y);y+=7;doc.setFont('times','bold');doc.text(d.candidateName||'',ml,y);
+        doc.setFont('times','normal'); doc.setFontSize(10); doc.setTextColor(80,80,80); doc.text(d.date||'',ml,y); y+=8;
+        doc.setTextColor(17,17,17); doc.setFontSize(10.5);
+        doc.text('Hiring Manager',ml,y); y+=5; doc.text(d.company||'',ml,y); y+=10;
+        doc.setFont('times','bold'); doc.text('Re: Application for '+(d.role||''),ml,y); y+=10;
+        doc.setFont('times','normal'); doc.setFontSize(11); doc.setTextColor(17,17,17);
+        (d.paragraphs||[]).forEach(p=>{ const lines=doc.splitTextToSize(p,tw); checkPage(lines.length*5.5+4); lines.forEach(l=>{doc.text(l,ml,y);y+=5.5;}); y+=4; });
+        y+=4; doc.text('Sincerely,',ml,y); y+=7; doc.setFont('times','bold'); doc.text(d.candidateName||'',ml,y);
         doc.save('cover-letter.pdf');
       }
-    } catch(e){showErr('PDF error: '+e.message);console.error(e);}
-    finally{btn.textContent='Download PDF';btn.disabled=false;}
+    } catch(e){ showErr('PDF error: '+e.message); console.error(e); }
+    finally{ btn.textContent='Download PDF'; btn.disabled=false; }
   }
 
-  /* ── Download for Word ── */
+  /* ── Download for Word (HTML) ── */
   function dlHTML() {
     const data=curTab==='cv'?cvData:clData; if(!data){showErr('Nothing to download yet.');return;}
     const preview=curTab==='cv'?renderCV(data):renderCL(data);
-    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0}body{max-width:750px;margin:40px auto;padding:0 30px;background:white}.cv-preview,.cl-preview{font-family:'EB Garamond',Georgia,serif;color:#111;line-height:1.55;font-size:11pt;padding:20px 0}.cv-name{font-size:22pt;font-weight:600;text-align:center;letter-spacing:.02em;margin-bottom:4px}.cv-title-line{text-align:center;font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#444;letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}.cv-contact{text-align:center;font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#333;margin-bottom:8px}.cv-rule{border:none;border-top:1.5px solid #111;margin:2px 0 12px}.cv-sec-title{font-size:7.5pt;font-weight:700;letter-spacing:.13em;text-transform:uppercase;font-family:'Inter',Arial,sans-serif;border-bottom:1px solid #111;padding-bottom:3px;margin-bottom:9px}.cv-section{margin-bottom:16px}.cv-summary{font-size:10.5pt;line-height:1.65}.cv-job{margin-bottom:9px}.cv-job-row{display:flex;justify-content:space-between}.cv-job-title{font-weight:600;font-size:11pt}.cv-job-dates{font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#333}.cv-job-co{font-style:italic;font-size:10pt;color:#333;margin-bottom:3px}.cv-bullets{margin:0;padding-left:15px}.cv-bullets li{font-size:10pt;line-height:1.6;margin-bottom:2px}.cv-edu-row{display:flex;justify-content:space-between;margin-bottom:7px}.cv-edu-deg{font-weight:600;font-size:11pt}.cv-edu-sch{font-style:italic;font-size:10pt;color:#333}.cv-edu-note{font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#555}.cv-edu-dates{font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#333;white-space:nowrap}.cv-skills,.cv-certs{font-size:10pt;line-height:1.7}.cl-date{font-size:9.5pt;font-family:'Inter',Arial,sans-serif;color:#555;margin-bottom:16px}.cl-addr{font-size:10.5pt;margin-bottom:10px;line-height:1.6}.cl-re{font-size:10.5pt;font-weight:600;margin-bottom:16px}.cl-para{margin-bottom:11px;font-size:11pt;line-height:1.8}.cl-sig{margin-top:18px;font-size:11pt}.cl-sig strong{display:block;margin-top:5px}</style></head><body>${preview}</body></html>`;
-    const a=document.createElement('a'); a.href='data:text/html;charset=utf-8,'+encodeURIComponent(html); a.download=curTab==='cv'?'cv.html':'cover-letter.html'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{max-width:750px;margin:40px auto;padding:0 30px;background:white}
+.cv-preview,.cl-preview{font-family:'EB Garamond',Georgia,serif;color:#111;line-height:1.55;font-size:11pt;padding:20px 0}
+.cv-name{font-size:22pt;font-weight:600;text-align:center;letter-spacing:.02em;margin-bottom:4px}
+.cv-title-line{text-align:center;font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#444;letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+.cv-contact{text-align:center;font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#333;margin-bottom:8px}
+.cv-rule{border:none;border-top:1.5px solid #111;margin:2px 0 12px}
+.cv-sec-title{font-size:7.5pt;font-weight:700;letter-spacing:.13em;text-transform:uppercase;font-family:'Inter',Arial,sans-serif;border-bottom:1px solid #111;padding-bottom:3px;margin-bottom:9px}
+.cv-section{margin-bottom:16px}
+.cv-summary{font-size:10.5pt;line-height:1.65}
+.cv-job{margin-bottom:14px}
+.cv-job-row{display:flex;justify-content:space-between}
+.cv-job-title{font-weight:600;font-size:11pt}
+.cv-job-dates{font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#333}
+.cv-job-co{font-style:italic;font-size:10pt;color:#333;margin-bottom:5px}
+.cv-job-context{font-size:9.5pt;color:#444;line-height:1.6;margin-bottom:7px;font-style:italic}
+.cv-bullets{margin:0;padding-left:15px}
+.cv-bullets li{font-size:10pt;line-height:1.6;margin-bottom:2px}
+.cv-edu-row{display:flex;justify-content:space-between;margin-bottom:7px}
+.cv-edu-deg{font-weight:600;font-size:11pt}
+.cv-edu-sch{font-style:italic;font-size:10pt;color:#333}
+.cv-edu-note{font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#555}
+.cv-edu-dates{font-size:9pt;font-family:'Inter',Arial,sans-serif;color:#333;white-space:nowrap}
+.cv-skills,.cv-certs{font-size:10pt;line-height:1.7}
+.cl-date{font-size:9.5pt;font-family:'Inter',Arial,sans-serif;color:#555;margin-bottom:16px}
+.cl-addr{font-size:10.5pt;margin-bottom:10px;line-height:1.6}
+.cl-re{font-size:10.5pt;font-weight:600;margin-bottom:16px}
+.cl-para{margin-bottom:11px;font-size:11pt;line-height:1.8}
+.cl-sig{margin-top:18px;font-size:11pt}
+.cl-sig strong{display:block;margin-top:5px}
+</style></head><body>${preview}</body></html>`;
+    const a=document.createElement('a'); a.href='data:text/html;charset=utf-8,'+encodeURIComponent(html);
+    a.download=curTab==='cv'?'cv.html':'cover-letter.html';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
   }
 
   /* ── Copy plain text ── */
   function copyTxt() {
     let txt='';
     if(curTab==='cv'&&cvData){
-      const d=cvData,c=d.contact||{};
+      const d=cvData, c=d.contact||{};
       txt+=(d.name||'')+'\n';
-      const cp=[c.email,c.phone,c.location,c.linkedin].filter(Boolean).join(' | '); if(cp)txt+=cp+'\n';
-      if(d.title)txt+=d.title+'\n'; txt+='\n';
+      const cp=[c.email,c.phone,c.location,c.linkedin].filter(Boolean).join(' | ');
+      if(cp)txt+=cp+'\n'; if(d.title)txt+=d.title+'\n'; txt+='\n';
       if(d.summary)txt+='PROFESSIONAL SUMMARY\n'+d.summary+'\n\n';
-      (d.experience||[]).forEach(j=>{txt+=(j.title||'')+' | '+(j.company||'')+(j.location?' | '+j.location:'')+(j.dates?' | '+j.dates:'')+'\n';(j.bullets||[]).forEach(b=>txt+='- '+b+'\n');txt+='\n';});
-      if((d.education||[]).length){txt+='EDUCATION\n';(d.education||[]).forEach(e=>{txt+=(e.degree||'')+', '+(e.school||'')+(e.dates?' ('+e.dates+')':'')+'\n';if(e.note)txt+=e.note+'\n';});txt+='\n';}
+      txt+='PROFESSIONAL EXPERIENCE\n';
+      (d.experience||[]).forEach(j=>{
+        txt+=(j.title||'')+' | '+(j.company||'')+(j.location?' | '+j.location:'')+(j.dates?' | '+j.dates:'')+'\n';
+        if(j.context)txt+=j.context+'\n';
+        (j.bullets||[]).forEach(b=>txt+='- '+b+'\n');
+        txt+='\n';
+      });
+      if((d.education||[]).length){ txt+='EDUCATION\n'; (d.education||[]).forEach(e=>{ txt+=(e.degree||'')+', '+(e.school||'')+(e.dates?' ('+e.dates+')':'')+'\n'; if(e.note)txt+=e.note+'\n'; }); txt+='\n'; }
       if(d.skills)txt+='CORE COMPETENCIES\n'+d.skills+'\n\n';
       if((d.certifications||[]).filter(Boolean).length)txt+='CERTIFICATIONS & AWARDS\n'+(d.certifications||[]).join('\n')+'\n';
     } else if(curTab==='cl'&&clData){
-      const d=clData; txt+=(d.date||'')+'\n\nHiring Manager\n'+(d.company||'')+'\n\nRe: Application for '+(d.role||'')+'\n\n';
-      (d.paragraphs||[]).forEach(p=>txt+=p+'\n\n'); txt+='Sincerely,\n'+(d.candidateName||'');
+      const d=clData;
+      txt+=(d.date||'')+'\n\nHiring Manager\n'+(d.company||'')+'\n\nRe: Application for '+(d.role||'')+'\n\n';
+      (d.paragraphs||[]).forEach(p=>txt+=p+'\n\n');
+      txt+='Sincerely,\n'+(d.candidateName||'');
     }
     if(!txt){showErr('Nothing to copy yet.');return;}
     navigator.clipboard.writeText(txt).then(()=>{ const b=document.getElementById('btnCopy'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy plain text',2000); });
